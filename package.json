@@ -1,0 +1,41 @@
+{
+  "name": "@199-biotechnologies/zen-mcp-server",
+  "version": "1.0.0",
+  "description": "NPX wrapper for Zen MCP Server - Claude + Multiple AI Models",
+  "main": "index.js",
+  "bin": {
+    "zen-mcp-server": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "mcp",
+    "claude",
+    "ai",
+    "gemini",
+    "openai",
+    "openrouter",
+    "development",
+    "tools",
+    "docker"
+  ],
+  "author": "199 Biotechnologies",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/199-biotechnologies/zen-mcp-server-npx.git"
+  },
+  "bugs": {
+    "url": "https://github.com/199-biotechnologies/zen-mcp-server-npx/issues"
+  },
+  "homepage": "https://github.com/199-biotechnologies/zen-mcp-server-npx#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "preferGlobal": true,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
