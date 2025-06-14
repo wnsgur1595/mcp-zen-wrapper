@@ -106,7 +106,7 @@ function checkDependencies() {
 
 function main() {
   console.error('🚀 Starting Zen MCP Server (Python mode)');
-  console.error('=' * 50);
+  console.error('='.repeat(50));
   
   // Check Python
   if (!checkPython()) {
@@ -119,8 +119,23 @@ function main() {
   // Check/install dependencies
   checkDependencies();
   
-  // Pass through environment variables
+  // Pass through environment variables and API keys
   const env = { ...process.env };
+  
+  // If we're using the local installation, load its .env file
+  if (ZEN_DIR === LOCAL_ZEN_DIR && fs.existsSync(ENV_FILE)) {
+    const dotenv = require('fs').readFileSync(ENV_FILE, 'utf8');
+    dotenv.split('\n').forEach(line => {
+      const match = line.match(/^([^=]+)=(.*)$/);
+      if (match) {
+        const key = match[1].trim();
+        const value = match[2].trim();
+        if (key && !env[key]) {
+          env[key] = value;
+        }
+      }
+    });
+  }
   
   // Check for virtual environment
   const venvPath = path.join(ZEN_DIR, 'venv');
@@ -131,7 +146,7 @@ function main() {
     : 'python3';
   
   console.error(`\n✅ Starting server with ${pythonBin}...`);
-  console.error('=' * 50 + '\n');
+  console.error('='.repeat(50) + '\n');
   
   // Execute the Python server
   const child = spawn(pythonBin, ['run.py'], {
