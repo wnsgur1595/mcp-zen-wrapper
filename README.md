@@ -1,6 +1,6 @@
 # Zen MCP Server NPX Wrapper
 
-Easy-to-use NPX wrapper for [Zen MCP Server](https://github.com/BeehiveInnovations/zen-mcp-server) - Give Claude access to multiple AI models (Gemini, OpenAI, OpenRouter, Ollama) for enhanced development capabilities.
+Easy-to-use NPX wrapper for [Zen MCP Enhanced](https://github.com/199-biotechnologies/zen-mcp-enhanced) - Give Claude access to multiple AI models (Gemini, OpenAI, OpenRouter, Ollama) for enhanced development capabilities with improved usability.
 
 ## Quick Start
 
@@ -142,7 +142,8 @@ The NPX wrapper starts the complete Zen MCP Server stack:
 
 ## Links
 
-- [Zen MCP Server Repo](https://github.com/BeehiveInnovations/zen-mcp-server)
+- [Zen MCP Enhanced Repo](https://github.com/199-biotechnologies/zen-mcp-enhanced)
+- [Original Zen MCP Server](https://github.com/BeehiveInnovations/zen-mcp-server)
 - [NPX Wrapper Repo](https://github.com/199-biotechnologies/zen-mcp-server-npx)
 - [Model Context Protocol](https://modelcontextprotocol.io/)
 
