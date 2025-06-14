@@ -91,7 +91,10 @@ function checkDependencies() {
         ? path.join(venvPath, 'Scripts', 'pip')
         : path.join(venvPath, 'bin', 'pip');
       
-      execSync(`${pip} install -r requirements.txt`, { stdio: 'inherit', cwd: ZEN_DIR });
+      execSync(`${pip} install -r requirements.txt`, { 
+        stdio: ['inherit', 'inherit', 'inherit'], 
+        cwd: ZEN_DIR 
+      });
       console.error('✓ Dependencies installed successfully');
       return true;
     } catch (installError) {
@@ -150,7 +153,7 @@ function main() {
   
   // Execute the Python server
   const child = spawn(pythonBin, ['run.py'], {
-    stdio: 'inherit',
+    stdio: ['inherit', 'inherit', 'inherit'],
     cwd: ZEN_DIR,
     env: env
   });
