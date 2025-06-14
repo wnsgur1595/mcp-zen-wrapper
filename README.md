@@ -4,11 +4,17 @@ Easy-to-use NPX wrapper for [Zen MCP Enhanced](https://github.com/199-biotechnol
 
 ## Quick Start
 
+### Docker Mode (Default)
 ```bash
 npx zen-mcp-server-199bio
 ```
 
-That's it! The wrapper handles all Docker setup automatically.
+### Python Mode (Docker-free) 🆕
+```bash
+npx zen-mcp-server-199bio --no-docker
+```
+
+The wrapper handles all setup automatically!
 
 ## What is Zen MCP Server?
 
@@ -18,19 +24,25 @@ Zen MCP Server gives Claude Desktop access to multiple AI models for:
 - 🔍 **Code review** and architectural analysis
 - 🐛 **Advanced debugging** with specialized models
 - 📊 **Large context analysis** (Gemini: 1M tokens, O3: 200K tokens)
-- 🔄 **Conversation threading** with Redis - AI models maintain context across multiple calls
+- 🔄 **Conversation threading** - AI models maintain context across multiple calls
 
 ## First Time Setup
 
 On first run, the wrapper will:
+
+**Docker Mode:**
 1. Check/start Docker Desktop
 2. Clone Zen MCP Server to `~/.zen-mcp-server`
 3. Create `.env` file and prompt for API keys
 4. Build Docker image automatically
-5. Start all services via Docker Compose:
-   - Zen MCP Server container
-   - Redis container (for conversation threading)
-   - Log monitor service
+5. Start all services via Docker Compose
+
+**Python Mode (--no-docker):**
+1. Check Python 3.11+ is installed
+2. Clone Zen MCP Server to `~/.zen-mcp-server`
+3. Create `.env` file and prompt for API keys
+4. Run directly with Python (no Docker needed!)
+5. Uses in-memory conversation storage
 
 ## Configuration
 
@@ -110,11 +122,18 @@ Once configured, Claude will have access to these tools:
 - 🌍 **Cross-platform** - Works on macOS, Windows (WSL2), Linux
 
 ### What's Included
-The NPX wrapper starts the complete Zen MCP Server stack:
+
+**Docker Mode:**
 - **Zen MCP Server** - Main server handling AI model communication
 - **Redis** - For conversation threading and context persistence
 - **Log Monitor** - For debugging and monitoring
 - All features from the original Docker Compose setup
+
+**Python Mode (--no-docker):**
+- **Zen MCP Server** - Running directly with Python
+- **In-memory storage** - Conversation threading without Redis
+- **Lighter footprint** - No Docker overhead
+- **Same features** - Just without persistence across restarts
 
 ## Troubleshooting
 
@@ -135,10 +154,17 @@ The NPX wrapper starts the complete Zen MCP Server stack:
 
 ## Requirements
 
+**For Docker Mode:**
 - Docker Desktop
 - Node.js >= 14.0.0
 - Git
-- At least one API key (Gemini, OpenAI, or OpenRouter)
+- At least one API key
+
+**For Python Mode (--no-docker):**
+- Python 3.11+
+- Node.js >= 14.0.0
+- Git
+- At least one API key
 
 ## Links
 

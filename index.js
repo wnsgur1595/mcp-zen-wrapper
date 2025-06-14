@@ -9,6 +9,10 @@ const { promisify } = require('util');
 const { pipeline } = require('stream');
 const streamPipeline = promisify(pipeline);
 
+// Check for --no-docker flag
+const USE_DOCKER = !process.argv.includes('--no-docker');
+const args = process.argv.filter(arg => arg !== '--no-docker');
+
 const ZEN_REPO_URL = 'https://github.com/199-biotechnologies/zen-mcp-enhanced';
 // Check if we already have a local installation
 const LOCAL_ZEN_DIR = '/Users/biobook/playground/zen-mcp-server';
@@ -129,19 +133,26 @@ function setupZenMcpServer() {
   }
 }
 
-function main() {
-  // Check and start Docker if needed
-  if (!checkDocker()) {
-    startDocker();
+function runPythonMode() {
+  console.error('Running in Python mode (Docker-free)...');
+  
+  // Check Python version
+  try {
+    const pythonVersion = execSync('python3 --version', { encoding: 'utf8' });
+    console.error(`Using ${pythonVersion.trim()}`);
+  } catch (error) {
+    console.error('Python 3 is not installed. Please install Python 3.11 or higher.');
+    process.exit(1);
   }
   
-  // Setup Zen MCP Server
-  setupZenMcpServer();
+  // Pass through environment variables
+  const env = { ...process.env };
   
-  // Execute the MCP server
-  const child = spawn('docker', ['exec', '-i', 'zen-mcp-server', 'python', 'server.py'], {
+  // Execute the Python server directly
+  const child = spawn('python3', ['run.py'], {
     stdio: 'inherit',
-    cwd: ZEN_DIR
+    cwd: ZEN_DIR,
+    env: env
   });
   
   child.on('error', (error) => {
@@ -163,13 +174,58 @@ function main() {
   });
 }
 
+function main() {
+  if (USE_DOCKER) {
+    // Docker mode (original behavior)
+    
+    // Check and start Docker if needed
+    if (!checkDocker()) {
+      startDocker();
+    }
+    
+    // Setup Zen MCP Server
+    setupZenMcpServer();
+    
+    // Execute the MCP server
+    const child = spawn('docker', ['exec', '-i', 'zen-mcp-server', 'python', 'server.py'], {
+      stdio: 'inherit',
+      cwd: ZEN_DIR
+    });
+    
+    child.on('error', (error) => {
+      console.error('Failed to execute Zen MCP Server:', error.message);
+      process.exit(1);
+    });
+    
+    child.on('exit', (code) => {
+      process.exit(code || 0);
+    });
+    
+    // Handle graceful shutdown
+    process.on('SIGINT', () => {
+      child.kill('SIGINT');
+    });
+    
+    process.on('SIGTERM', () => {
+      child.kill('SIGTERM');
+    });
+  } else {
+    // Python mode (Docker-free)
+    setupZenMcpServer();  // Still need to clone repo and check .env
+    runPythonMode();
+  }
+}
+
 // Check if we have the required commands
-try {
-  execSync('docker --version', { stdio: 'ignore' });
-} catch {
-  console.error('Docker is not installed. Please install Docker Desktop first.');
-  console.error('Visit: https://www.docker.com/products/docker-desktop/');
-  process.exit(1);
+if (USE_DOCKER) {
+  try {
+    execSync('docker --version', { stdio: 'ignore' });
+  } catch {
+    console.error('Docker is not installed. Please install Docker Desktop first.');
+    console.error('Visit: https://www.docker.com/products/docker-desktop/');
+    console.error('\nAlternatively, run with --no-docker flag to use Python mode.');
+    process.exit(1);
+  }
 }
 
 try {
