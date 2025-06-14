@@ -38,7 +38,7 @@ On first run, the wrapper will:
 4. Set up Python virtual environment
 5. Install dependencies automatically
 
-## Configuration
+## Quick Install
 
 ### 1. Get API Keys (at least one required)
 
@@ -46,26 +46,8 @@ Choose one or more:
 - **Gemini**: [Google AI Studio](https://makersuite.google.com/app/apikey)
 - **OpenAI**: [OpenAI Platform](https://platform.openai.com/api-keys)
 - **OpenRouter**: [OpenRouter](https://openrouter.ai/) (access to 100+ models)
-- **Local Models**: Ollama, vLLM, LM Studio (no API key needed)
 
-### 2. Configure API Keys
-
-Edit `~/.zen-mcp-server/.env`:
-
-```bash
-# Option 1: Native APIs
-GEMINI_API_KEY=your_gemini_key_here
-OPENAI_API_KEY=your_openai_key_here
-
-# Option 2: OpenRouter (for multiple models)
-OPENROUTER_API_KEY=your_openrouter_key_here
-
-# Option 3: Local models (Ollama example)
-CUSTOM_API_URL=http://localhost:11434/v1
-CUSTOM_MODEL_NAME=llama3.2
-```
-
-## Usage with Claude Desktop
+### 2. Add to Claude Desktop
 
 Add to your `claude_desktop_config.json`:
 
@@ -74,11 +56,18 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "zen": {
       "command": "npx",
-      "args": ["zen-mcp-server-199bio"]
+      "args": ["zen-mcp-server-199bio"],
+      "env": {
+        "GEMINI_API_KEY": "your_gemini_key_here",
+        "OPENAI_API_KEY": "your_openai_key_here",
+        "OPENROUTER_API_KEY": "your_openrouter_key_here"
+      }
     }
   }
 }
 ```
+
+That's it! Just restart Claude Desktop and you're ready to go.
 
 **Location of config file:**
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
