@@ -5,7 +5,7 @@ Easy-to-use NPX wrapper for [Zen MCP Server](https://github.com/BeehiveInnovatio
 ## Quick Start
 
 ```bash
-npx @199-biotechnologies/zen-mcp-server
+npx zen-mcp-server-199bio
 ```
 
 That's it! The wrapper handles all Docker setup automatically.
@@ -64,7 +64,7 @@ Add to your `claude_desktop_config.json`:
   "mcpServers": {
     "zen": {
       "command": "npx",
-      "args": ["@199-biotechnologies/zen-mcp-server"]
+      "args": ["zen-mcp-server-199bio"]
     }
   }
 }
@@ -78,7 +78,7 @@ Add to your `claude_desktop_config.json`:
 ## Usage with Claude CLI
 
 ```bash
-claude mcp add zen "npx" "@199-biotechnologies/zen-mcp-server"
+claude mcp add zen "npx" "zen-mcp-server-199bio"
 ```
 
 ## Available Tools

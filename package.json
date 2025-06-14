@@ -1,5 +1,5 @@
 {
-  "name": "@199-biotechnologies/zen-mcp-server",
+  "name": "zen-mcp-server-199bio",
   "version": "1.0.0",
   "description": "NPX wrapper for Zen MCP Server - Claude + Multiple AI Models",
   "main": "index.js",
