@@ -18,6 +18,7 @@ Zen MCP Server gives Claude Desktop access to multiple AI models for:
 - 🔍 **Code review** and architectural analysis
 - 🐛 **Advanced debugging** with specialized models
 - 📊 **Large context analysis** (Gemini: 1M tokens, O3: 200K tokens)
+- 🔄 **Conversation threading** with Redis - AI models maintain context across multiple calls
 
 ## First Time Setup
 
@@ -26,7 +27,10 @@ On first run, the wrapper will:
 2. Clone Zen MCP Server to `~/.zen-mcp-server`
 3. Create `.env` file and prompt for API keys
 4. Build Docker image automatically
-5. Start required services (Redis + Zen MCP)
+5. Start all services via Docker Compose:
+   - Zen MCP Server container
+   - Redis container (for conversation threading)
+   - Log monitor service
 
 ## Configuration
 
@@ -95,11 +99,19 @@ Once configured, Claude will have access to these tools:
 ## Features
 
 - ✅ **Zero config** - Just run with npx
-- 🐳 **Automatic Docker management** - Starts Docker Desktop if needed
+- 🐳 **Full Docker Compose stack** - Includes Redis for conversation threading
 - 🔧 **Smart setup** - Handles all initialization automatically
+- 💾 **Redis included** - Maintains context between AI model calls
 - 🔄 **Graceful shutdown** - Proper cleanup on exit
 - 📦 **No installation** - Always runs latest version
 - 🌍 **Cross-platform** - Works on macOS, Windows (WSL2), Linux
+
+### What's Included
+The NPX wrapper starts the complete Zen MCP Server stack:
+- **Zen MCP Server** - Main server handling AI model communication
+- **Redis** - For conversation threading and context persistence
+- **Log Monitor** - For debugging and monitoring
+- All features from the original Docker Compose setup
 
 ## Troubleshooting
 
