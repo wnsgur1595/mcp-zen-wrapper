@@ -91,9 +91,9 @@ function checkDependencies() {
         ? path.join(venvPath, 'Scripts', 'pip')
         : path.join(venvPath, 'bin', 'pip');
       
-      execSync(`${pip} install -r requirements.txt`, { 
-        stdio: ['inherit', 'inherit', 'inherit'], 
-        cwd: ZEN_DIR 
+      execSync(`${pip} install -r requirements.txt > /dev/null 2>&1`, { 
+        cwd: ZEN_DIR,
+        shell: true
       });
       console.error('✓ Dependencies installed successfully');
       return true;

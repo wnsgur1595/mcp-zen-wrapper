@@ -1,6 +1,6 @@
 {
   "name": "zen-mcp-server-199bio",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "NPX wrapper for Zen MCP Server - Claude + Multiple AI Models",
   "main": "index.js",
   "bin": {
