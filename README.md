@@ -1,20 +1,14 @@
 # Zen MCP Server NPX Wrapper
 
-Easy-to-use NPX wrapper for [Zen MCP Enhanced](https://github.com/199-biotechnologies/zen-mcp-enhanced) - Give Claude access to multiple AI models (Gemini, OpenAI, OpenRouter, Ollama) for enhanced development capabilities with improved usability.
+Easy-to-use NPX wrapper for [Zen MCP Enhanced](https://github.com/199-biotechnologies/zen-mcp-enhanced) - Give Claude access to multiple AI models (Gemini, OpenAI, OpenRouter, Ollama) for enhanced development capabilities.
 
 ## Quick Start
 
-### Docker Mode (Default)
 ```bash
 npx zen-mcp-server-199bio
 ```
 
-### Python Mode (Docker-free) 🆕
-```bash
-npx zen-mcp-server-199bio --no-docker
-```
-
-The wrapper handles all setup automatically!
+That's it! No Docker required. 🎉
 
 ## What is Zen MCP Server?
 
@@ -26,23 +20,23 @@ Zen MCP Server gives Claude Desktop access to multiple AI models for:
 - 📊 **Large context analysis** (Gemini: 1M tokens, O3: 200K tokens)
 - 🔄 **Conversation threading** - AI models maintain context across multiple calls
 
+## Features
+
+- ✅ **No Docker required** - Runs directly with Python
+- 🚀 **Fast startup** - No container overhead
+- 💾 **Lightweight** - Minimal resource usage
+- 🔧 **Auto-setup** - Handles Python dependencies automatically
+- 📦 **Virtual environment** - Isolated dependencies
+- 🌍 **Cross-platform** - Works on macOS, Windows, Linux
+
 ## First Time Setup
 
 On first run, the wrapper will:
-
-**Docker Mode:**
-1. Check/start Docker Desktop
-2. Clone Zen MCP Server to `~/.zen-mcp-server`
-3. Create `.env` file and prompt for API keys
-4. Build Docker image automatically
-5. Start all services via Docker Compose
-
-**Python Mode (--no-docker):**
 1. Check Python 3.11+ is installed
 2. Clone Zen MCP Server to `~/.zen-mcp-server`
 3. Create `.env` file and prompt for API keys
-4. Run directly with Python (no Docker needed!)
-5. Uses in-memory conversation storage
+4. Set up Python virtual environment
+5. Install dependencies automatically
 
 ## Configuration
 
@@ -67,7 +61,7 @@ OPENAI_API_KEY=your_openai_key_here
 OPENROUTER_API_KEY=your_openrouter_key_here
 
 # Option 3: Local models (Ollama example)
-CUSTOM_API_URL=http://host.docker.internal:11434/v1
+CUSTOM_API_URL=http://localhost:11434/v1
 CUSTOM_MODEL_NAME=llama3.2
 ```
 
@@ -111,60 +105,41 @@ Once configured, Claude will have access to these tools:
 
 **Quick Usage**: Just say "use zen" for quick AI consultations!
 
-## Features
-
-- ✅ **Zero config** - Just run with npx
-- 🐳 **Full Docker Compose stack** - Includes Redis for conversation threading
-- 🔧 **Smart setup** - Handles all initialization automatically
-- 💾 **Redis included** - Maintains context between AI model calls
-- 🔄 **Graceful shutdown** - Proper cleanup on exit
-- 📦 **No installation** - Always runs latest version
-- 🌍 **Cross-platform** - Works on macOS, Windows (WSL2), Linux
-
-### What's Included
-
-**Docker Mode:**
-- **Zen MCP Server** - Main server handling AI model communication
-- **Redis** - For conversation threading and context persistence
-- **Log Monitor** - For debugging and monitoring
-- All features from the original Docker Compose setup
-
-**Python Mode (--no-docker):**
-- **Zen MCP Server** - Running directly with Python
-- **In-memory storage** - Conversation threading without Redis
-- **Lighter footprint** - No Docker overhead
-- **Same features** - Just without persistence across restarts
-
 ## Troubleshooting
 
-### Docker not starting?
-- macOS: Make sure Docker Desktop is installed
-- Windows: Requires WSL2 and Docker Desktop
-- Linux: Ensure Docker daemon is running
+### Python not found?
+- macOS: `brew install python@3.11`
+- Windows: Download from [python.org](https://www.python.org/downloads/)
+- Linux: `sudo apt install python3.11`
+
+### Dependencies issue?
+The wrapper tries to install automatically, but if it fails:
+```bash
+cd ~/.zen-mcp-server
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+```
 
 ### API key issues?
 - Check `~/.zen-mcp-server/.env` has valid keys
 - Ensure at least one API key is configured
 - For OpenRouter, check your credits/limits
 
-### Connection failed?
-1. Restart Claude Desktop after configuration
-2. Check Docker containers: `docker ps`
-3. View logs: `docker logs zen-mcp-server`
-
 ## Requirements
 
-**For Docker Mode:**
-- Docker Desktop
-- Node.js >= 14.0.0
-- Git
-- At least one API key
-
-**For Python Mode (--no-docker):**
 - Python 3.11+
 - Node.js >= 14.0.0
 - Git
-- At least one API key
+- At least one API key (Gemini, OpenAI, or OpenRouter)
+
+## Why No Docker?
+
+We removed Docker because:
+- **Faster startup** - No container overhead
+- **Less resource usage** - No Redis, no Docker daemon
+- **Simpler** - Just Python and your API keys
+- **Same features** - Conversation threading works perfectly with in-memory storage
 
 ## Links
 

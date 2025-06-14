@@ -4,75 +4,12 @@ const { spawn, execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const https = require('https');
-const { promisify } = require('util');
-const { pipeline } = require('stream');
-const streamPipeline = promisify(pipeline);
-
-// Check for --no-docker flag
-const USE_DOCKER = !process.argv.includes('--no-docker');
-const args = process.argv.filter(arg => arg !== '--no-docker');
 
 const ZEN_REPO_URL = 'https://github.com/199-biotechnologies/zen-mcp-enhanced';
 // Check if we already have a local installation
 const LOCAL_ZEN_DIR = '/Users/biobook/playground/zen-mcp-server';
 const ZEN_DIR = fs.existsSync(LOCAL_ZEN_DIR) ? LOCAL_ZEN_DIR : path.join(os.homedir(), '.zen-mcp-server');
 const ENV_FILE = path.join(ZEN_DIR, '.env');
-
-async function downloadFile(url, dest) {
-  const file = fs.createWriteStream(dest);
-  return new Promise((resolve, reject) => {
-    https.get(url, (response) => {
-      response.pipe(file);
-      file.on('finish', () => {
-        file.close(resolve);
-      });
-    }).on('error', (err) => {
-      fs.unlink(dest, () => {});
-      reject(err);
-    });
-  });
-}
-
-function checkDocker() {
-  try {
-    execSync('docker info', { stdio: 'ignore' });
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function startDocker() {
-  console.error('Docker is not running. Starting Docker Desktop...');
-  
-  if (process.platform === 'darwin') {
-    try {
-      execSync('open -a Docker');
-    } catch (error) {
-      console.error('Failed to start Docker Desktop. Please start it manually.');
-      process.exit(1);
-    }
-  } else {
-    console.error('Please start Docker Desktop manually.');
-    process.exit(1);
-  }
-  
-  // Wait for Docker to start
-  console.error('Waiting for Docker to start...');
-  let attempts = 0;
-  while (!checkDocker() && attempts < 30) {
-    execSync('sleep 2');
-    attempts++;
-  }
-  
-  if (!checkDocker()) {
-    console.error('Docker failed to start. Please check Docker Desktop.');
-    process.exit(1);
-  }
-  
-  console.error('Docker started successfully!');
-}
 
 function setupZenMcpServer() {
   // Check if zen-mcp-server directory exists
@@ -103,53 +40,101 @@ function setupZenMcpServer() {
       process.exit(1);
     }
   }
-  
-  // Check if Docker image exists
+}
+
+function checkPython() {
   try {
-    const images = execSync('docker images zen-mcp-server --format "{{.Repository}}"', { encoding: 'utf8' });
-    if (!images.trim()) {
-      console.error('Building Docker image...');
-      execSync('docker-compose build', { cwd: ZEN_DIR, stdio: 'inherit' });
+    const pythonVersion = execSync('python3 --version', { encoding: 'utf8' });
+    console.error(`✓ ${pythonVersion.trim()}`);
+    
+    // Check if it's 3.11+
+    const versionMatch = pythonVersion.match(/Python (\d+)\.(\d+)/);
+    if (versionMatch) {
+      const major = parseInt(versionMatch[1]);
+      const minor = parseInt(versionMatch[2]);
+      if (major < 3 || (major === 3 && minor < 11)) {
+        console.error('⚠️  Warning: Python 3.11+ is recommended for best performance');
+      }
     }
+    return true;
   } catch (error) {
-    console.error('Failed to check/build Docker image.');
-    process.exit(1);
-  }
-  
-  // Check if containers are running
-  try {
-    const running = execSync('docker ps --filter name=zen-mcp-server --format "{{.Names}}"', { encoding: 'utf8' });
-    if (!running.includes('zen-mcp-server')) {
-      console.error('Starting Zen MCP Server containers...');
-      execSync('docker-compose up -d', { cwd: ZEN_DIR, stdio: 'inherit' });
-      
-      // Wait for services to be ready
-      console.error('Waiting for services to start...');
-      execSync('sleep 5');
-    }
-  } catch (error) {
-    console.error('Failed to start containers.');
-    process.exit(1);
+    console.error('❌ Python 3 is not installed.');
+    console.error('Please install Python 3.11 or higher:');
+    console.error('  - macOS: brew install python@3.11');
+    console.error('  - Windows: https://www.python.org/downloads/');
+    console.error('  - Linux: sudo apt install python3.11');
+    return false;
   }
 }
 
-function runPythonMode() {
-  console.error('Running in Python mode (Docker-free)...');
-  
-  // Check Python version
+function checkDependencies() {
+  console.error('Checking Python dependencies...');
   try {
-    const pythonVersion = execSync('python3 --version', { encoding: 'utf8' });
-    console.error(`Using ${pythonVersion.trim()}`);
+    execSync('python3 -c "import mcp, google.genai, openai, pydantic"', { 
+      stdio: 'ignore',
+      cwd: ZEN_DIR 
+    });
+    console.error('✓ All Python dependencies installed');
+    return true;
   } catch (error) {
-    console.error('Python 3 is not installed. Please install Python 3.11 or higher.');
+    console.error('⚠️  Some Python dependencies are missing');
+    console.error('Installing dependencies...');
+    try {
+      // Try to install in virtual environment
+      const venvPath = path.join(ZEN_DIR, 'venv');
+      if (!fs.existsSync(venvPath)) {
+        console.error('Creating virtual environment...');
+        execSync(`python3 -m venv ${venvPath}`, { stdio: 'inherit', cwd: ZEN_DIR });
+      }
+      
+      const pip = process.platform === 'win32' 
+        ? path.join(venvPath, 'Scripts', 'pip')
+        : path.join(venvPath, 'bin', 'pip');
+      
+      execSync(`${pip} install -r requirements.txt`, { stdio: 'inherit', cwd: ZEN_DIR });
+      console.error('✓ Dependencies installed successfully');
+      return true;
+    } catch (installError) {
+      console.error('Failed to install dependencies automatically.');
+      console.error('Please install manually:');
+      console.error(`  cd ${ZEN_DIR}`);
+      console.error('  python3 -m pip install -r requirements.txt');
+      return false;
+    }
+  }
+}
+
+function main() {
+  console.error('🚀 Starting Zen MCP Server (Python mode)');
+  console.error('=' * 50);
+  
+  // Check Python
+  if (!checkPython()) {
     process.exit(1);
   }
+  
+  // Setup Zen MCP Server
+  setupZenMcpServer();
+  
+  // Check/install dependencies
+  checkDependencies();
   
   // Pass through environment variables
   const env = { ...process.env };
   
-  // Execute the Python server directly
-  const child = spawn('python3', ['run.py'], {
+  // Check for virtual environment
+  const venvPath = path.join(ZEN_DIR, 'venv');
+  const pythonBin = fs.existsSync(venvPath)
+    ? (process.platform === 'win32' 
+        ? path.join(venvPath, 'Scripts', 'python')
+        : path.join(venvPath, 'bin', 'python'))
+    : 'python3';
+  
+  console.error(`\n✅ Starting server with ${pythonBin}...`);
+  console.error('=' * 50 + '\n');
+  
+  // Execute the Python server
+  const child = spawn(pythonBin, ['run.py'], {
     stdio: 'inherit',
     cwd: ZEN_DIR,
     env: env
@@ -174,60 +159,7 @@ function runPythonMode() {
   });
 }
 
-function main() {
-  if (USE_DOCKER) {
-    // Docker mode (original behavior)
-    
-    // Check and start Docker if needed
-    if (!checkDocker()) {
-      startDocker();
-    }
-    
-    // Setup Zen MCP Server
-    setupZenMcpServer();
-    
-    // Execute the MCP server
-    const child = spawn('docker', ['exec', '-i', 'zen-mcp-server', 'python', 'server.py'], {
-      stdio: 'inherit',
-      cwd: ZEN_DIR
-    });
-    
-    child.on('error', (error) => {
-      console.error('Failed to execute Zen MCP Server:', error.message);
-      process.exit(1);
-    });
-    
-    child.on('exit', (code) => {
-      process.exit(code || 0);
-    });
-    
-    // Handle graceful shutdown
-    process.on('SIGINT', () => {
-      child.kill('SIGINT');
-    });
-    
-    process.on('SIGTERM', () => {
-      child.kill('SIGTERM');
-    });
-  } else {
-    // Python mode (Docker-free)
-    setupZenMcpServer();  // Still need to clone repo and check .env
-    runPythonMode();
-  }
-}
-
-// Check if we have the required commands
-if (USE_DOCKER) {
-  try {
-    execSync('docker --version', { stdio: 'ignore' });
-  } catch {
-    console.error('Docker is not installed. Please install Docker Desktop first.');
-    console.error('Visit: https://www.docker.com/products/docker-desktop/');
-    console.error('\nAlternatively, run with --no-docker flag to use Python mode.');
-    process.exit(1);
-  }
-}
-
+// Check if we have Git (still needed to clone the repo)
 try {
   execSync('git --version', { stdio: 'ignore' });
 } catch {
