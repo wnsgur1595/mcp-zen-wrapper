@@ -89,12 +89,15 @@ claude mcp add zen "npx" "zen-mcp-server-199bio"
 
 Once configured, Claude will have access to these tools:
 
+- **`zen`** - Default tool for quick AI consultation (alias for chat)
 - **`chat`** - Collaborative development discussions
 - **`thinkdeep`** - Extended reasoning (Gemini 2.0 Pro)
 - **`codereview`** - Professional code review
 - **`precommit`** - Pre-commit validation
 - **`debug`** - Advanced debugging assistance
 - **`analyze`** - Smart file and codebase analysis
+
+**Quick Usage**: Just say "use zen" for quick AI consultations!
 
 ## Features
 
