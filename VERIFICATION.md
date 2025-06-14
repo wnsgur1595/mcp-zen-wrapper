@@ -5,7 +5,7 @@
 ### NPM Package
 - **Package Name**: `zen-mcp-server-199bio`
 - **Current Version**: `2.1.1` (published to npm)
-- **Repository**: https://github.com/199-biotechnologies/mcp-zen-npx
+- **Repository**: https://github.com/199-biotechnologies/mcp-zen-plus
 
 ### Key Features Implemented
 1. ✅ **No Docker Required** - Runs directly with Python 3.11+
@@ -42,8 +42,7 @@ No installation needed - NPX handles everything!
 
 ### Repository Structure
 - **Main Repo**: BeehiveInnovations/zen-mcp-server (original)
-- **NPX Wrapper**: 199-biotechnologies/mcp-zen-npx (your wrapper)
-- **Deleted**: mcp-zen-plus (removed to avoid version confusion)
+- **NPM Package Repo**: 199-biotechnologies/mcp-zen-plus (this wrapper)
 
 ### Version History
 - v2.0.0 - Removed Docker, added Python-only mode

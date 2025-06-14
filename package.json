@@ -24,12 +24,12 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/199-biotechnologies/zen-mcp-server-npx.git"
+    "url": "https://github.com/199-biotechnologies/mcp-zen-plus.git"
   },
   "bugs": {
-    "url": "https://github.com/199-biotechnologies/zen-mcp-server-npx/issues"
+    "url": "https://github.com/199-biotechnologies/mcp-zen-plus/issues"
   },
-  "homepage": "https://github.com/199-biotechnologies/zen-mcp-server-npx#readme",
+  "homepage": "https://github.com/199-biotechnologies/mcp-zen-plus#readme",
   "engines": {
     "node": ">=14.0.0"
   },

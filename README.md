@@ -144,7 +144,7 @@ We removed Docker because:
 ## Links
 
 - [Zen MCP Server](https://github.com/BeehiveInnovations/zen-mcp-server)
-- [NPX Wrapper Repo](https://github.com/199-biotechnologies/mcp-zen-npx)
+- [MCP Zen Plus](https://github.com/199-biotechnologies/mcp-zen-plus)
 - [Model Context Protocol](https://modelcontextprotocol.io/)
 
 ## License
