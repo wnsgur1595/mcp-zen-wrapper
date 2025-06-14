@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const ZEN_REPO_URL = 'https://github.com/199-biotechnologies/zen-mcp-enhanced';
+const ZEN_REPO_URL = 'https://github.com/BeehiveInnovations/zen-mcp-server';
 // Check if we already have a local installation
 const LOCAL_ZEN_DIR = '/Users/biobook/playground/zen-mcp-server';
 const ZEN_DIR = fs.existsSync(LOCAL_ZEN_DIR) ? LOCAL_ZEN_DIR : path.join(os.homedir(), '.zen-mcp-server');
