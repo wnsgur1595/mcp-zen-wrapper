@@ -43,34 +43,46 @@ function setupZenMcpServer() {
 }
 
 function checkPython() {
-  try {
-    const pythonVersion = execSync('python3 --version', { encoding: 'utf8' });
-    console.error(`✓ ${pythonVersion.trim()}`);
-    
-    // Check if it's 3.11+
-    const versionMatch = pythonVersion.match(/Python (\d+)\.(\d+)/);
-    if (versionMatch) {
-      const major = parseInt(versionMatch[1]);
-      const minor = parseInt(versionMatch[2]);
-      if (major < 3 || (major === 3 && minor < 11)) {
-        console.error('⚠️  Warning: Python 3.11+ is recommended for best performance');
+  // Try python3 first, then python (for Windows compatibility)
+  const pythonCommands = ['python3', 'python'];
+  
+  for (const command of pythonCommands) {
+    try {
+      const pythonVersion = execSync(`${command} --version`, { encoding: 'utf8' });
+      console.error(`✓ ${pythonVersion.trim()}`);
+      
+      // Check if it's 3.11+
+      const versionMatch = pythonVersion.match(/Python (\d+)\.(\d+)/);
+      if (versionMatch) {
+        const major = parseInt(versionMatch[1]);
+        const minor = parseInt(versionMatch[2]);
+        if (major < 3 || (major === 3 && minor < 11)) {
+          console.error('⚠️  Warning: Python 3.11+ is recommended for best performance');
+        }
+        // Store the working command for later use
+        process.env.PYTHON_CMD = command;
+        return true;
       }
+    } catch (error) {
+      // Continue to next command
+      continue;
     }
-    return true;
-  } catch (error) {
-    console.error('❌ Python 3 is not installed.');
-    console.error('Please install Python 3.11 or higher:');
-    console.error('  - macOS: brew install python@3.11');
-    console.error('  - Windows: https://www.python.org/downloads/');
-    console.error('  - Linux: sudo apt install python3.11');
-    return false;
   }
+  
+  console.error('❌ Python 3 is not installed.');
+  console.error('Please install Python 3.11 or higher:');
+  console.error('  - macOS: brew install python@3.11');
+  console.error('  - Windows: https://www.python.org/downloads/');
+  console.error('  - Linux: sudo apt install python3.11');
+  return false;
 }
 
 function checkDependencies() {
   console.error('Checking Python dependencies...');
+  const pythonCmd = process.env.PYTHON_CMD || 'python3';
+  
   try {
-    execSync('python3 -c "import mcp, google.genai, openai, pydantic"', { 
+    execSync(`${pythonCmd} -c "import mcp, google.genai, openai, pydantic"`, { 
       stdio: 'ignore',
       cwd: ZEN_DIR 
     });
@@ -84,7 +96,7 @@ function checkDependencies() {
       const venvPath = path.join(ZEN_DIR, 'venv');
       if (!fs.existsSync(venvPath)) {
         console.error('Creating virtual environment...');
-        execSync(`python3 -m venv ${venvPath}`, { stdio: 'inherit', cwd: ZEN_DIR });
+        execSync(`${pythonCmd} -m venv ${venvPath}`, { stdio: 'inherit', cwd: ZEN_DIR });
       }
       
       const pip = process.platform === 'win32' 
@@ -146,7 +158,7 @@ function main() {
     ? (process.platform === 'win32' 
         ? path.join(venvPath, 'Scripts', 'python')
         : path.join(venvPath, 'bin', 'python'))
-    : 'python3';
+    : (process.env.PYTHON_CMD || 'python3');
   
   console.error(`\n✅ Starting server with ${pythonBin}...`);
   console.error('='.repeat(50) + '\n');
