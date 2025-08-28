@@ -164,7 +164,7 @@ function main() {
   console.error('='.repeat(50) + '\n');
   
   // Execute the Python server
-  const child = spawn(pythonBin, ['run.py'], {
+  const child = spawn(pythonBin, ['server.py'], {
     stdio: ['inherit', 'inherit', 'inherit'],
     cwd: ZEN_DIR,
     env: env
