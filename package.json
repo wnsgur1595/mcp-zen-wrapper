@@ -1,6 +1,6 @@
 {
   "name": "@wnsgur1595/zen-mcp-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "NPX wrapper for Zen MCP Server - Claude + Multiple AI Models",
   "main": "index.js",
   "bin": {

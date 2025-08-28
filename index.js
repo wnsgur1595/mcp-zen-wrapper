@@ -81,8 +81,17 @@ function checkDependencies() {
   console.error('Checking Python dependencies...');
   const pythonCmd = process.env.PYTHON_CMD || 'python3';
   
+  // Check for virtual environment first
+  const venvPath = path.join(ZEN_DIR, 'venv');
+  const venvPython = process.platform === 'win32' 
+    ? path.join(venvPath, 'Scripts', 'python')
+    : path.join(venvPath, 'bin', 'python');
+  
+  // Use virtual environment python if it exists, otherwise system python
+  const checkPython = fs.existsSync(venvPython) ? venvPython : pythonCmd;
+  
   try {
-    execSync(`${pythonCmd} -c "import mcp, google.genai, openai, pydantic"`, { 
+    execSync(`"${checkPython}" -c "import mcp, google.genai, openai, pydantic"`, { 
       stdio: 'ignore',
       cwd: ZEN_DIR 
     });
@@ -92,28 +101,28 @@ function checkDependencies() {
     console.error('⚠️  Some Python dependencies are missing');
     console.error('Installing dependencies...');
     try {
-      // Try to install in virtual environment
-      const venvPath = path.join(ZEN_DIR, 'venv');
+      // Create virtual environment if it doesn't exist
       if (!fs.existsSync(venvPath)) {
         console.error('Creating virtual environment...');
-        execSync(`${pythonCmd} -m venv ${venvPath}`, { stdio: 'inherit', cwd: ZEN_DIR });
+        execSync(`"${pythonCmd}" -m venv "${venvPath}"`, { stdio: 'inherit', cwd: ZEN_DIR });
       }
       
       const pip = process.platform === 'win32' 
         ? path.join(venvPath, 'Scripts', 'pip')
         : path.join(venvPath, 'bin', 'pip');
       
-      execSync(`${pip} install -r requirements.txt > /dev/null 2>&1`, { 
-        cwd: ZEN_DIR,
-        shell: true
+      console.error('Installing Python packages...');
+      execSync(`"${pip}" install -r requirements.txt`, { 
+        stdio: 'inherit',
+        cwd: ZEN_DIR
       });
       console.error('✓ Dependencies installed successfully');
       return true;
     } catch (installError) {
       console.error('Failed to install dependencies automatically.');
       console.error('Please install manually:');
-      console.error(`  cd ${ZEN_DIR}`);
-      console.error('  python3 -m pip install -r requirements.txt');
+      console.error(`  cd "${ZEN_DIR}"`);
+      console.error(`  "${pythonCmd}" -m pip install -r requirements.txt`);
       return false;
     }
   }
