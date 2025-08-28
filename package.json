@@ -1,5 +1,5 @@
 {
-  "name": "zen-mcp-server-199bio",
+  "name": "zen-mcp-server-wnsgur1595",
   "version": "2.2.0",
   "description": "NPX wrapper for Zen MCP Server - Claude + Multiple AI Models",
   "main": "index.js",
@@ -20,16 +20,16 @@
     "tools",
     "docker"
   ],
-  "author": "199 Biotechnologies",
+  "author": "wnsgur1595",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/199-biotechnologies/mcp-zen-plus.git"
+    "url": "https://github.com/wnsgur1595/mcp-zen-wrapper.git"
   },
   "bugs": {
-    "url": "https://github.com/199-biotechnologies/mcp-zen-plus/issues"
+    "url": "https://github.com/wnsgur1595/mcp-zen-wrapper/issues"
   },
-  "homepage": "https://github.com/199-biotechnologies/mcp-zen-plus#readme",
+  "homepage": "https://github.com/wnsgur1595/mcp-zen-wrapper#readme",
   "engines": {
     "node": ">=14.0.0"
   },
